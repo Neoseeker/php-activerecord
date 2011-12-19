@@ -405,7 +405,10 @@ class Table
 				else
 					$hash[$name] = $this->conn->datetime_to_string($value);
 			}
-			else
+			elseif (isset($this->columns[$name]) && $this->columns[$name]->type == Column::ARRAYTYPE && is_array($value))
+			{
+				$hash[$name] = implode(',',$value);
+			} else
 				$hash[$name] = $value;
 		}
 		return $hash;

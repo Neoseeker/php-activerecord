@@ -113,5 +113,15 @@ class ColumnTest extends SnakeCase_PHPUnit_Framework_TestCase
 		$this->assert_equals(null,$column->cast(null,$this->conn));
 		$this->assert_equals(null,$column->cast('',$this->conn));
 	}
+
+	public function test_set_returns_array()
+	{
+		$column = new Column();
+		$column->type = Column::ARRAYTYPE;
+		$this->assert_equals(array('one','two'),$column->cast(array('one','two'),$this->conn));
+
+		//single value is returned as string
+		$this->assert_equals('one',$column->cast('one',$this->conn));
+	}
 }
 ?>
