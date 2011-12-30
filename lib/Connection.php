@@ -315,7 +315,10 @@ abstract class Connection
 				throw new DatabaseException($this);
 			if ($this->logging && $this->logger instanceof \Doctrine\DBAL\Logging\SQLLogger) {
 				$this->logger->stopQuery();
-				$this->logger->dump(0,'PHP-AR: ');
+
+				if ($this->logger instanceof \neolib\SQLDebugStack) { //only dump if this is a neolib SQLDebugStack
+					$this->logger->dump(0,'PHP-AR: ');
+				}
 			}
 		} catch (PDOException $e) {
 			throw new DatabaseException($sth);
