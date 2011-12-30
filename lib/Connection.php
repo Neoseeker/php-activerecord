@@ -291,8 +291,13 @@ abstract class Connection
 	 */
 	public function query($sql, &$values=array())
 	{
-		if ($this->logging)
-			$this->logger->log($sql);
+		if ($this->logging) {
+			if ($this->logger instanceof \Doctrine\DBAL\Logging\SQLLogger) {
+				$this->logger->startQuery($sql,$values);
+			} else {
+				$this->logger->log($sql);
+			}
+		}
 
 		$this->last_query = $sql;
 
@@ -308,6 +313,10 @@ abstract class Connection
 		try {
 			if (!$sth->execute($values))
 				throw new DatabaseException($this);
+			if ($this->logging && $this->logger instanceof \Doctrine\DBAL\Logging\SQLLogger) {
+				$this->logger->stopQuery();
+				$this->logger->dump(0,'PHP-AR: ');
+			}
 		} catch (PDOException $e) {
 			throw new DatabaseException($sth);
 		}
